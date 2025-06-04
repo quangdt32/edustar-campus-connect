@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
 import LecturerSidebar from "./components/LecturerSidebar";
 import StudentSidebar from "./components/StudentSidebar";
@@ -47,37 +48,39 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="flex min-h-screen bg-gray-50">
-            {renderSidebar()}
-            <main className="flex-1">
-              <Routes>
-                {/* Admin routes */}
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/students" element={<Students />} />
-                <Route path="/subjects" element={<Subjects />} />
-                <Route path="/classes" element={<Classes />} />
-                <Route path="/schedule" element={<Schedule />} />
-                <Route path="/attendance" element={<Attendance />} />
-                <Route path="/complaints" element={<Complaints />} />
-                <Route path="/settings" element={<Settings />} />
-                
-                {/* Lecturer routes */}
-                <Route path="/lecturer" element={<LecturerDashboard />} />
-                <Route path="/lecturer/*" element={<LecturerDashboard />} />
-                
-                {/* Student routes */}
-                <Route path="/student" element={<StudentDashboard />} />
-                <Route path="/student/*" element={<StudentDashboard />} />
-                
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-          </div>
-        </BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="flex min-h-screen bg-gray-50">
+              {renderSidebar()}
+              <main className="flex-1">
+                <Routes>
+                  {/* Admin routes */}
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/students" element={<Students />} />
+                  <Route path="/subjects" element={<Subjects />} />
+                  <Route path="/classes" element={<Classes />} />
+                  <Route path="/schedule" element={<Schedule />} />
+                  <Route path="/attendance" element={<Attendance />} />
+                  <Route path="/complaints" element={<Complaints />} />
+                  <Route path="/settings" element={<Settings />} />
+                  
+                  {/* Lecturer routes */}
+                  <Route path="/lecturer" element={<LecturerDashboard />} />
+                  <Route path="/lecturer/*" element={<LecturerDashboard />} />
+                  
+                  {/* Student routes */}
+                  <Route path="/student" element={<StudentDashboard />} />
+                  <Route path="/student/*" element={<StudentDashboard />} />
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+            </div>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
