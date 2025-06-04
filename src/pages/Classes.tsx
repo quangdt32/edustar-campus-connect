@@ -8,25 +8,18 @@ import {
   Edit, 
   Eye, 
   UserPlus,
-  UserMinus,
   Calendar,
   MapPin,
-  Trash2,
-  LogIn
+  Trash2
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
 import { useClasses } from '../hooks/useClasses';
-import { useAuth } from '../hooks/useAuth';
 import CreateClassDialog from '../components/classes/CreateClassDialog';
 import EditClassDialog from '../components/classes/EditClassDialog';
 import DeleteClassDialog from '../components/classes/DeleteClassDialog';
 import ManageStudentsDialog from '../components/classes/ManageStudentsDialog';
-import LoginDialog from '../components/auth/LoginDialog';
-import RegisterDialog from '../components/auth/RegisterDialog';
 
 const Classes = () => {
   const { classes, createClass, updateClass, deleteClass } = useClasses();
-  const { user, login, register, logout, isAuthenticated } = useAuth();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('');
@@ -36,8 +29,6 @@ const Classes = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [manageStudentsDialogOpen, setManageStudentsDialogOpen] = useState(false);
-  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-  const [registerDialogOpen, setRegisterDialogOpen] = useState(false);
   
   const [selectedClass, setSelectedClass] = useState<any>(null);
 
@@ -65,84 +56,14 @@ const Classes = () => {
     setManageStudentsDialogOpen(true);
   };
 
-  const handleSwitchToRegister = () => {
-    setLoginDialogOpen(false);
-    setRegisterDialogOpen(true);
-  };
-
-  const handleSwitchToLogin = () => {
-    setRegisterDialogOpen(false);
-    setLoginDialogOpen(true);
-  };
-
-  // If not authenticated, show login prompt
-  if (!isAuthenticated) {
-    return (
-      <div className="flex-1 bg-gray-50">
-        <Header 
-          title="Quản lý lớp học" 
-          subtitle="Vui lòng đăng nhập để tiếp tục"
-        />
-        
-        <div className="p-6">
-          <div className="max-w-md mx-auto mt-20 bg-white rounded-lg shadow-lg p-8 text-center">
-            <LogIn className="h-16 w-16 text-blue-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Chào mừng đến với EduStar</h2>
-            <p className="text-gray-600 mb-6">Đăng nhập để truy cập hệ thống quản lý lớp học</p>
-            <Button onClick={() => setLoginDialogOpen(true)} className="w-full mb-3">
-              Đăng nhập
-            </Button>
-            <Button variant="outline" onClick={() => setRegisterDialogOpen(true)} className="w-full">
-              Đăng ký tài khoản mới
-            </Button>
-          </div>
-        </div>
-
-        <LoginDialog
-          open={loginDialogOpen}
-          onOpenChange={setLoginDialogOpen}
-          onLogin={login}
-          onSwitchToRegister={handleSwitchToRegister}
-        />
-        
-        <RegisterDialog
-          open={registerDialogOpen}
-          onOpenChange={setRegisterDialogOpen}
-          onRegister={register}
-          onSwitchToLogin={handleSwitchToLogin}
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="flex-1 bg-gray-50">
       <Header 
         title="Quản lý lớp học" 
-        subtitle={`Danh sách và thông tin lớp học - Chào ${user?.fullName}`}
+        subtitle="Danh sách và thông tin lớp học"
       />
       
       <div className="p-6">
-        {/* User Info & Logout */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-medium">
-                  {user?.fullName.charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <div>
-                <p className="font-medium">{user?.fullName}</p>
-                <p className="text-sm text-gray-500">{user?.email} • {user?.role}</p>
-              </div>
-            </div>
-            <Button variant="outline" onClick={logout}>
-              Đăng xuất
-            </Button>
-          </div>
-        </div>
-
         {/* Action Bar */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -169,15 +90,13 @@ const Classes = () => {
                 <option value="HK1 2024">HK1 2024</option>
                 <option value="HK2 2023">HK2 2023</option>
               </select>
-              {user?.role === 'admin' && (
-                <button 
-                  onClick={() => setCreateDialogOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Tạo lớp học
-                </button>
-              )}
+              <button 
+                onClick={() => setCreateDialogOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Tạo lớp học
+              </button>
             </div>
           </div>
         </div>
@@ -242,33 +161,27 @@ const Classes = () => {
                   <button className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors" title="Xem chi tiết">
                     <Eye className="h-4 w-4" />
                   </button>
-                  {(user?.role === 'admin' || user?.role === 'lecturer') && (
-                    <>
-                      <button 
-                        onClick={() => handleEdit(classItem)}
-                        className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" 
-                        title="Chỉnh sửa"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleManageStudents(classItem)}
-                        className="p-1 text-purple-600 hover:bg-purple-100 rounded transition-colors" 
-                        title="Quản lý sinh viên"
-                      >
-                        <UserPlus className="h-4 w-4" />
-                      </button>
-                    </>
-                  )}
-                  {user?.role === 'admin' && (
-                    <button 
-                      onClick={() => handleDelete(classItem)}
-                      className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" 
-                      title="Xóa lớp"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
+                  <button 
+                    onClick={() => handleEdit(classItem)}
+                    className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" 
+                    title="Chỉnh sửa"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={() => handleManageStudents(classItem)}
+                    className="p-1 text-purple-600 hover:bg-purple-100 rounded transition-colors" 
+                    title="Quản lý sinh viên"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(classItem)}
+                    className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" 
+                    title="Xóa lớp"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -285,25 +198,23 @@ const Classes = () => {
         )}
 
         {/* Quick Actions */}
-        {user?.role === 'admin' && (
-          <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Thao tác nhanh</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button className="text-left p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                <div className="font-medium text-blue-900">Đăng ký lớp học hàng loạt</div>
-                <div className="text-sm text-blue-600 mt-1">Cho phép sinh viên đăng ký nhiều lớp cùng lúc</div>
-              </button>
-              <button className="text-left p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-                <div className="font-medium text-green-900">Tạo lịch học tự động</div>
-                <div className="text-sm text-green-600 mt-1">Hệ thống tự động xếp lịch cho các lớp</div>
-              </button>
-              <button className="text-left p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
-                <div className="font-medium text-orange-900">Xem lịch sử thay đổi</div>
-                <div className="text-sm text-orange-600 mt-1">Theo dõi các thay đổi của lớp học</div>
-              </button>
-            </div>
+        <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Thao tác nhanh</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button className="text-left p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+              <div className="font-medium text-blue-900">Đăng ký lớp học hàng loạt</div>
+              <div className="text-sm text-blue-600 mt-1">Cho phép sinh viên đăng ký nhiều lớp cùng lúc</div>
+            </button>
+            <button className="text-left p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+              <div className="font-medium text-green-900">Tạo lịch học tự động</div>
+              <div className="text-sm text-green-600 mt-1">Hệ thống tự động xếp lịch cho các lớp</div>
+            </button>
+            <button className="text-left p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+              <div className="font-medium text-orange-900">Xem lịch sử thay đổi</div>
+              <div className="text-sm text-orange-600 mt-1">Theo dõi các thay đổi của lớp học</div>
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Dialogs */}
