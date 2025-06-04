@@ -12,48 +12,37 @@ import {
   Download,
   Upload
 } from 'lucide-react';
+import { useStudents } from '../hooks/useStudents';
+import CreateStudentDialog from '../components/students/CreateStudentDialog';
+import EditStudentDialog from '../components/students/EditStudentDialog';
+import DeleteStudentDialog from '../components/students/DeleteStudentDialog';
 
 const Students = () => {
-  const [students] = useState([
-    {
-      id: 1,
-      studentId: 'SV001',
-      name: 'Nguyễn Văn An',
-      email: 'an.nguyen@edu.com',
-      phone: '0123456789',
-      class: 'CNTT-K21',
-      status: 'Đang học',
-      avatar: 'https://ui-avatars.com/api/?name=Nguyen+Van+An&background=3b82f6&color=fff'
-    },
-    {
-      id: 2,
-      studentId: 'SV002',
-      name: 'Trần Thị Bình',
-      email: 'binh.tran@edu.com',
-      phone: '0987654321',
-      class: 'QTKD-K20',
-      status: 'Đang học',
-      avatar: 'https://ui-avatars.com/api/?name=Tran+Thi+Binh&background=10b981&color=fff'
-    },
-    {
-      id: 3,
-      studentId: 'SV003',
-      name: 'Lê Minh Cường',
-      email: 'cuong.le@edu.com',
-      phone: '0369852147',
-      class: 'CNTT-K21',
-      status: 'Tạm nghỉ',
-      avatar: 'https://ui-avatars.com/api/?name=Le+Minh+Cuong&background=f59e0b&color=fff'
-    }
-  ]);
-
+  const { students, createStudent, updateStudent, deleteStudent } = useStudents();
+  
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Dialog states
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
 
   const filteredStudents = students.filter(student =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleEdit = (student: any) => {
+    setSelectedStudent(student);
+    setEditDialogOpen(true);
+  };
+
+  const handleDelete = (student: any) => {
+    setSelectedStudent(student);
+    setDeleteDialogOpen(true);
+  };
 
   return (
     <div className="flex-1 bg-gray-50">
@@ -88,7 +77,10 @@ const Students = () => {
                 <Download className="h-4 w-4" />
                 Xuất file
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => setCreateDialogOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 <Plus className="h-4 w-4" />
                 Thêm sinh viên
               </button>
@@ -151,10 +143,16 @@ const Students = () => {
                         <button className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors">
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors">
+                        <button 
+                          onClick={() => handleEdit(student)}
+                          className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors"
+                        >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors">
+                        <button 
+                          onClick={() => handleDelete(student)}
+                          className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
@@ -169,7 +167,7 @@ const Students = () => {
           <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700">
-                Hiển thị <span className="font-medium">1</span> đến <span className="font-medium">3</span> của{' '}
+                Hiển thị <span className="font-medium">1</span> đến <span className="font-medium">{filteredStudents.length}</span> của{' '}
                 <span className="font-medium">{filteredStudents.length}</span> kết quả
               </p>
               <div className="flex gap-2">
@@ -187,6 +185,27 @@ const Students = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <CreateStudentDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onCreateStudent={createStudent}
+      />
+      
+      <EditStudentDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        studentData={selectedStudent}
+        onUpdateStudent={updateStudent}
+      />
+      
+      <DeleteStudentDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        studentData={selectedStudent}
+        onDeleteStudent={deleteStudent}
+      />
     </div>
   );
 };

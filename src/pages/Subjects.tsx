@@ -10,42 +10,43 @@ import {
   ToggleLeft, 
   ToggleRight,
   Clock,
-  User
+  User,
+  Trash2
 } from 'lucide-react';
+import { useSubjects } from '../hooks/useSubjects';
+import CreateSubjectDialog from '../components/subjects/CreateSubjectDialog';
+import EditSubjectDialog from '../components/subjects/EditSubjectDialog';
+import DeleteSubjectDialog from '../components/subjects/DeleteSubjectDialog';
 
 const Subjects = () => {
-  const [subjects] = useState([
-    {
-      id: 1,
-      code: 'IT101',
-      name: 'Lập trình căn bản',
-      credits: 3,
-      description: 'Môn học cung cấp kiến thức cơ bản về lập trình',
-      instructor: 'TS. Nguyễn Văn A',
-      semester: 'HK1 2024',
-      status: 'Đang hoạt động'
-    },
-    {
-      id: 2,
-      code: 'IT201',
-      name: 'Cấu trúc dữ liệu và giải thuật',
-      credits: 4,
-      description: 'Nghiên cứu các cấu trúc dữ liệu và thuật toán cơ bản',
-      instructor: 'ThS. Trần Thị B',
-      semester: 'HK1 2024',
-      status: 'Đang hoạt động'
-    },
-    {
-      id: 3,
-      code: 'MK101',
-      name: 'Marketing căn bản',
-      credits: 3,
-      description: 'Kiến thức cơ bản về marketing và quảng cáo',
-      instructor: 'ThS. Lê Minh C',
-      semester: 'HK2 2023',
-      status: 'Không hoạt động'
-    }
-  ]);
+  const { subjects, createSubject, updateSubject, deleteSubject } = useSubjects();
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSemester, setSelectedSemester] = useState('');
+  
+  // Dialog states
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState<any>(null);
+
+  // Filter subjects
+  const filteredSubjects = subjects.filter(subject => {
+    const matchesSearch = subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         subject.code.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSemester = !selectedSemester || subject.semester === selectedSemester;
+    return matchesSearch && matchesSemester;
+  });
+
+  const handleEdit = (subject: any) => {
+    setSelectedSubject(subject);
+    setEditDialogOpen(true);
+  };
+
+  const handleDelete = (subject: any) => {
+    setSelectedSubject(subject);
+    setDeleteDialogOpen(true);
+  };
 
   return (
     <div className="flex-1 bg-gray-50">
@@ -64,18 +65,27 @@ const Subjects = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm môn học..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             
             {/* Filters */}
             <div className="flex gap-3">
-              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option>Tất cả học kỳ</option>
-                <option>HK1 2024</option>
-                <option>HK2 2023</option>
+              <select 
+                value={selectedSemester}
+                onChange={(e) => setSelectedSemester(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Tất cả học kỳ</option>
+                <option value="HK1 2024">HK1 2024</option>
+                <option value="HK2 2023">HK2 2023</option>
               </select>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => setCreateDialogOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 <Plus className="h-4 w-4" />
                 Thêm môn học
               </button>
@@ -85,7 +95,7 @@ const Subjects = () => {
 
         {/* Subjects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {subjects.map((subject) => (
+          {filteredSubjects.map((subject) => (
             <div key={subject.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -131,8 +141,19 @@ const Subjects = () => {
                   <button className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors" title="Xem chi tiết">
                     <Eye className="h-4 w-4" />
                   </button>
-                  <button className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" title="Chỉnh sửa">
+                  <button 
+                    onClick={() => handleEdit(subject)}
+                    className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" 
+                    title="Chỉnh sửa"
+                  >
                     <Edit className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(subject)}
+                    className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" 
+                    title="Xóa môn học"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </button>
                   <button className="p-1 text-gray-600 hover:bg-gray-100 rounded transition-colors" title="Kích hoạt/Vô hiệu hóa">
                     {subject.status === 'Đang hoạt động' ? (
@@ -150,23 +171,50 @@ const Subjects = () => {
         {/* Quick Stats */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-bold text-blue-600">127</div>
+            <div className="text-2xl font-bold text-blue-600">{subjects.length}</div>
             <div className="text-sm text-gray-600">Tổng môn học</div>
           </div>
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-bold text-green-600">98</div>
+            <div className="text-2xl font-bold text-green-600">
+              {subjects.filter(s => s.status === 'Đang hoạt động').length}
+            </div>
             <div className="text-sm text-gray-600">Đang hoạt động</div>
           </div>
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-bold text-orange-600">3.2</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {(subjects.reduce((sum, s) => sum + s.credits, 0) / subjects.length).toFixed(1)}
+            </div>
             <div className="text-sm text-gray-600">Tín chỉ trung bình</div>
           </div>
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-bold text-purple-600">15</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {new Set(subjects.map(s => s.instructor)).size}
+            </div>
             <div className="text-sm text-gray-600">Giảng viên</div>
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <CreateSubjectDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onCreateSubject={createSubject}
+      />
+      
+      <EditSubjectDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        subjectData={selectedSubject}
+        onUpdateSubject={updateSubject}
+      />
+      
+      <DeleteSubjectDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        subjectData={selectedSubject}
+        onDeleteSubject={deleteSubject}
+      />
     </div>
   );
 };

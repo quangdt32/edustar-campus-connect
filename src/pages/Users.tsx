@@ -9,39 +9,39 @@ import {
   UserX, 
   Edit, 
   Eye,
-  Mail
+  Mail,
+  Trash2
 } from 'lucide-react';
+import { useUsers } from '../hooks/useUsers';
+import CreateUserDialog from '../components/users/CreateUserDialog';
+import EditUserDialog from '../components/users/EditUserDialog';
+import DeleteUserDialog from '../components/users/DeleteUserDialog';
 
 const Users = () => {
-  const [users] = useState([
-    {
-      id: 1,
-      name: 'Nguyễn Văn Admin',
-      email: 'admin@edustar.com',
-      role: 'Quản trị viên',
-      status: 'Đã kích hoạt',
-      lastLogin: '2024-01-15 09:30',
-      avatar: 'https://ui-avatars.com/api/?name=Admin&background=ef4444&color=fff'
-    },
-    {
-      id: 2,
-      name: 'TS. Trần Thị Hoa',
-      email: 'hoa.tran@edustar.com',
-      role: 'Giảng viên',
-      status: 'Đã kích hoạt',
-      lastLogin: '2024-01-15 08:15',
-      avatar: 'https://ui-avatars.com/api/?name=Tran+Thi+Hoa&background=10b981&color=fff'
-    },
-    {
-      id: 3,
-      name: 'ThS. Lê Minh Tuấn',
-      email: 'tuan.le@edustar.com',
-      role: 'Giảng viên',
-      status: 'Chưa kích hoạt',
-      lastLogin: 'Chưa đăng nhập',
-      avatar: 'https://ui-avatars.com/api/?name=Le+Minh+Tuan&background=6366f1&color=fff'
-    }
-  ]);
+  const { users, createUser, updateUser, deleteUser } = useUsers();
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Dialog states
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleEdit = (user: any) => {
+    setSelectedUser(user);
+    setEditDialogOpen(true);
+  };
+
+  const handleDelete = (user: any) => {
+    setSelectedUser(user);
+    setDeleteDialogOpen(true);
+  };
 
   const roleColors = {
     'Quản trị viên': 'bg-red-100 text-red-800',
@@ -66,13 +66,18 @@ const Users = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm người dùng..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             
             {/* Actions */}
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => setCreateDialogOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 <Plus className="h-4 w-4" />
                 Tạo tài khoản
               </button>
@@ -94,7 +99,7 @@ const Users = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
@@ -131,7 +136,11 @@ const Users = () => {
                         <button className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors" title="Xem chi tiết">
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" title="Chỉnh sửa">
+                        <button 
+                          onClick={() => handleEdit(user)}
+                          className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" 
+                          title="Chỉnh sửa"
+                        >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button className="p-1 text-purple-600 hover:bg-purple-100 rounded transition-colors" title="Phân quyền">
@@ -140,15 +149,13 @@ const Users = () => {
                         <button className="p-1 text-orange-600 hover:bg-orange-100 rounded transition-colors" title="Gửi email">
                           <Mail className="h-4 w-4" />
                         </button>
-                        {user.status === 'Đã kích hoạt' ? (
-                          <button className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" title="Khóa tài khoản">
-                            <UserX className="h-4 w-4" />
-                          </button>
-                        ) : (
-                          <button className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" title="Kích hoạt">
-                            <UserCheck className="h-4 w-4" />
-                          </button>
-                        )}
+                        <button 
+                          onClick={() => handleDelete(user)}
+                          className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" 
+                          title="Xóa tài khoản"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -186,6 +193,27 @@ const Users = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <CreateUserDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onCreateUser={createUser}
+      />
+      
+      <EditUserDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        userData={selectedUser}
+        onUpdateUser={updateUser}
+      />
+      
+      <DeleteUserDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        userData={selectedUser}
+        onDeleteUser={deleteUser}
+      />
     </div>
   );
 };
