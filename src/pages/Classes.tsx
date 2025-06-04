@@ -1,6 +1,10 @@
 
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import CreateClassDialog from '../components/classes/CreateClassDialog';
+import EditClassDialog from '../components/classes/EditClassDialog';
+import DeleteClassDialog from '../components/classes/DeleteClassDialog';
+import ManageStudentsDialog from '../components/classes/ManageStudentsDialog';
 import { 
   Plus, 
   Search, 
@@ -10,11 +14,13 @@ import {
   UserPlus,
   UserMinus,
   Calendar,
-  MapPin
+  MapPin,
+  Trash2
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Classes = () => {
-  const [classes] = useState([
+  const [classes, setClasses] = useState([
     {
       id: 1,
       code: 'CNTT-K21-01',
@@ -56,6 +62,46 @@ const Classes = () => {
     }
   ]);
 
+  const [dialogs, setDialogs] = useState({
+    create: false,
+    edit: false,
+    delete: false,
+    manageStudents: false
+  });
+
+  const [selectedClass, setSelectedClass] = useState(null);
+
+  const openDialog = (type: string, classData = null) => {
+    setSelectedClass(classData);
+    setDialogs({ ...dialogs, [type]: true });
+  };
+
+  const closeDialog = (type: string) => {
+    setDialogs({ ...dialogs, [type]: false });
+    setSelectedClass(null);
+  };
+
+  const handleCreateClass = (newClassData: any) => {
+    const newClass = {
+      ...newClassData,
+      id: classes.length + 1
+    };
+    setClasses([...classes, newClass]);
+    toast.success('Tạo lớp học thành công!');
+  };
+
+  const handleUpdateClass = (updatedClassData: any) => {
+    setClasses(classes.map(cls => 
+      cls.id === updatedClassData.id ? updatedClassData : cls
+    ));
+    toast.success('Cập nhật lớp học thành công!');
+  };
+
+  const handleDeleteClass = (classId: number) => {
+    setClasses(classes.filter(cls => cls.id !== classId));
+    toast.success('Xóa lớp học thành công!');
+  };
+
   return (
     <div className="flex-1 bg-gray-50">
       <Header 
@@ -84,7 +130,10 @@ const Classes = () => {
                 <option>HK1 2024</option>
                 <option>HK2 2023</option>
               </select>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => openDialog('create')}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 <Plus className="h-4 w-4" />
                 Tạo lớp học
               </button>
@@ -148,18 +197,27 @@ const Classes = () => {
               {/* Actions */}
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                 <span className="text-xs text-gray-500">{classItem.semester}</span>
-                <div className="flex items-center gap-2">
-                  <button className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors" title="Xem chi tiết">
-                    <Eye className="h-4 w-4" />
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={() => openDialog('manageStudents', classItem)}
+                    className="p-1 text-purple-600 hover:bg-purple-100 rounded transition-colors" 
+                    title="Quản lý sinh viên"
+                  >
+                    <Users className="h-4 w-4" />
                   </button>
-                  <button className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" title="Chỉnh sửa">
+                  <button 
+                    onClick={() => openDialog('edit', classItem)}
+                    className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors" 
+                    title="Chỉnh sửa"
+                  >
                     <Edit className="h-4 w-4" />
                   </button>
-                  <button className="p-1 text-purple-600 hover:bg-purple-100 rounded transition-colors" title="Thêm sinh viên">
-                    <UserPlus className="h-4 w-4" />
-                  </button>
-                  <button className="p-1 text-orange-600 hover:bg-orange-100 rounded transition-colors" title="Xóa sinh viên">
-                    <UserMinus className="h-4 w-4" />
+                  <button 
+                    onClick={() => openDialog('delete', classItem)}
+                    className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" 
+                    title="Xóa lớp học"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -186,6 +244,34 @@ const Classes = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <CreateClassDialog
+        open={dialogs.create}
+        onOpenChange={() => closeDialog('create')}
+        onCreateClass={handleCreateClass}
+      />
+
+      <EditClassDialog
+        open={dialogs.edit}
+        onOpenChange={() => closeDialog('edit')}
+        classData={selectedClass}
+        onUpdateClass={handleUpdateClass}
+      />
+
+      <DeleteClassDialog
+        open={dialogs.delete}
+        onOpenChange={() => closeDialog('delete')}
+        classData={selectedClass}
+        onDeleteClass={handleDeleteClass}
+      />
+
+      <ManageStudentsDialog
+        open={dialogs.manageStudents}
+        onOpenChange={() => closeDialog('manageStudents')}
+        classData={selectedClass}
+        onUpdateClass={handleUpdateClass}
+      />
     </div>
   );
 };
