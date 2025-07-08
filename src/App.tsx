@@ -20,6 +20,12 @@ import LecturerDashboard from "./pages/LecturerDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import TrainingSidebar from "./components/TrainingSidebar";
+import ExamSidebar from "./components/ExamSidebar";
+import StudentServiceSidebar from "./components/StudentServiceSidebar";
+import AdmissionSidebar from "./components/AdmissionSidebar";
+import TuitionSidebar from "./components/TuitionSidebar";
+import Grades from "./pages/Grades";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +34,11 @@ const getUserRole = () => {
   const path = window.location.pathname;
   if (path.startsWith('/lecturer')) return 'lecturer';
   if (path.startsWith('/student')) return 'student';
+  if (path.startsWith('/training')) return 'training';
+  if (path.startsWith('/exam')) return 'exam';
+  if (path.startsWith('/student-service')) return 'student-service';
+  if (path.startsWith('/admission')) return 'admission';
+  if (path.startsWith('/tuition')) return 'tuition';
   return 'admin';
 };
 
@@ -40,6 +51,16 @@ const App = () => {
         return <LecturerSidebar />;
       case 'student':
         return <StudentSidebar />;
+      case 'training':
+        return <TrainingSidebar />;
+      case 'exam':
+        return <ExamSidebar />;
+      case 'student-service':
+        return <StudentServiceSidebar />;
+      case 'admission':
+        return <AdmissionSidebar />;
+      case 'tuition':
+        return <TuitionSidebar />;
       default:
         return <Sidebar />;
     }
@@ -65,6 +86,7 @@ const App = () => {
                   <Route path="/classes" element={<Classes />} />
                   <Route path="/schedule" element={<Schedule />} />
                   <Route path="/attendance" element={<Attendance />} />
+                  <Route path="/grades" element={<Grades />} />
                   <Route path="/complaints" element={<Complaints />} />
                   <Route path="/settings" element={<Settings />} />
                   
@@ -73,6 +95,21 @@ const App = () => {
                   
                   {/* Student routes */}
                   <Route path="/student/*" element={<StudentDashboard />} />
+                  
+                  {/* Training staff routes */}
+                  <Route path="/training/*" element={<Dashboard />} />
+                  
+                  {/* Exam staff routes */}
+                  <Route path="/exam/*" element={<Dashboard />} />
+                  
+                  {/* Student service staff routes */}
+                  <Route path="/student-service/*" element={<Dashboard />} />
+                  
+                  {/* Admission staff routes */}
+                  <Route path="/admission/*" element={<Dashboard />} />
+                  
+                  {/* Tuition staff routes */}
+                  <Route path="/tuition/*" element={<Dashboard />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -1,45 +1,45 @@
+
 import React from 'react';
 import { 
   Home, 
+  CreditCard, 
   Users, 
-  GraduationCap, 
-  BookOpen, 
-  Calendar, 
-  ClipboardCheck, 
-  Calculator,
-  MessageSquare,
+  FileText, 
+  TrendingUp,
+  Calendar,
+  AlertCircle,
   Settings,
   LogOut,
-  School
+  School,
+  DollarSign
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Sidebar = () => {
+const TuitionSidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { icon: Home, label: 'Dashboard', path: '/' },
-    { icon: Users, label: 'Quản lý người dùng', path: '/users' },
-    { icon: GraduationCap, label: 'Quản lý sinh viên', path: '/students' },
-    { icon: BookOpen, label: 'Quản lý môn học', path: '/subjects' },
-    { icon: School, label: 'Quản lý lớp học', path: '/classes' },
-    { icon: Calendar, label: 'Lịch học', path: '/schedule' },
-    { icon: ClipboardCheck, label: 'Điểm danh', path: '/attendance' },
-    { icon: Calculator, label: 'Quản lý điểm', path: '/grades' },
-    { icon: MessageSquare, label: 'Khiếu nại', path: '/complaints' },
-    { icon: Settings, label: 'Cài đặt', path: '/settings' },
+    { icon: Home, label: 'Dashboard', path: '/tuition' },
+    { icon: CreditCard, label: 'Quản lý học phí', path: '/tuition/management' },
+    { icon: Users, label: 'Danh sách SV', path: '/tuition/students' },
+    { icon: DollarSign, label: 'Thu học phí', path: '/tuition/collection' },
+    { icon: AlertCircle, label: 'Nợ học phí', path: '/tuition/debts' },
+    { icon: Calendar, label: 'Lịch thu HP', path: '/tuition/schedule' },
+    { icon: TrendingUp, label: 'Thống kê HP', path: '/tuition/statistics' },
+    { icon: FileText, label: 'Báo cáo HP', path: '/tuition/reports' },
+    { icon: Settings, label: 'Cài đặt', path: '/tuition/settings' },
   ];
 
   return (
-    <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white w-64 min-h-screen p-4 shadow-xl">
+    <div className="bg-gradient-to-b from-red-900 to-red-800 text-white w-64 min-h-screen p-4 shadow-xl">
       {/* Logo */}
-      <div className="flex items-center gap-3 mb-8 pb-4 border-b border-blue-700">
+      <div className="flex items-center gap-3 mb-8 pb-4 border-b border-red-700">
         <div className="bg-orange-500 p-2 rounded-lg">
           <School className="h-6 w-6 text-white" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-orange-400">EduStar</h1>
-          <p className="text-xs text-blue-300">Quản lý đào tạo</p>
+          <p className="text-xs text-red-300">Phòng Học phí</p>
         </div>
       </div>
 
@@ -53,7 +53,7 @@ const Sidebar = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-blue-700 ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-red-700 ${
                 isActive ? 'bg-orange-500 shadow-lg' : ''
               }`}
             >
@@ -66,14 +66,14 @@ const Sidebar = () => {
 
       {/* User Info & Logout */}
       <div className="absolute bottom-4 left-4 right-4">
-        <div className="bg-blue-800 rounded-lg p-3 mb-3">
+        <div className="bg-red-800 rounded-lg p-3 mb-3">
           <div className="flex items-center gap-3">
             <div className="bg-orange-500 rounded-full w-8 h-8 flex items-center justify-center">
-              <span className="text-sm font-bold">AD</span>
+              <span className="text-sm font-bold">HP</span>
             </div>
             <div>
-              <p className="text-sm font-medium">Admin User</p>
-              <p className="text-xs text-blue-300">Quản trị viên</p>
+              <p className="text-sm font-medium">NV Học phí</p>
+              <p className="text-xs text-red-300">Phòng Học phí</p>
             </div>
           </div>
         </div>
@@ -86,4 +86,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default TuitionSidebar;
