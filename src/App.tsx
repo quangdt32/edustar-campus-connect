@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,11 @@ import { AuthProvider } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
 import LecturerSidebar from "./components/LecturerSidebar";
 import StudentSidebar from "./components/StudentSidebar";
+import TrainingSidebar from "./components/TrainingSidebar";
+import ExamSidebar from "./components/ExamSidebar";
+import StudentServiceSidebar from "./components/StudentServiceSidebar";
+import AdmissionSidebar from "./components/AdmissionSidebar";
+import TuitionSidebar from "./components/TuitionSidebar";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Students from "./pages/Students";
@@ -20,12 +26,11 @@ import LecturerDashboard from "./pages/LecturerDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
-import TrainingSidebar from "./components/TrainingSidebar";
-import ExamSidebar from "./components/ExamSidebar";
-import StudentServiceSidebar from "./components/StudentServiceSidebar";
-import AdmissionSidebar from "./components/AdmissionSidebar";
-import TuitionSidebar from "./components/TuitionSidebar";
 import Grades from "./pages/Grades";
+import TrainingDashboard from "./pages/training/TrainingDashboard";
+import ExamDashboard from "./pages/exam/ExamDashboard";
+import StudentServiceDashboard from "./pages/student-service/StudentServiceDashboard";
+import AdmissionDashboard from "./pages/admission/AdmissionDashboard";
 
 const queryClient = new QueryClient();
 
@@ -97,19 +102,19 @@ const App = () => {
                   <Route path="/student/*" element={<StudentDashboard />} />
                   
                   {/* Training staff routes */}
-                  <Route path="/training/*" element={<Dashboard />} />
+                  <Route path="/training/*" element={<TrainingDashboard />} />
                   
                   {/* Exam staff routes */}
-                  <Route path="/exam/*" element={<Dashboard />} />
+                  <Route path="/exam/*" element={<ExamDashboard />} />
                   
                   {/* Student service staff routes */}
-                  <Route path="/student-service/*" element={<Dashboard />} />
+                  <Route path="/student-service/*" element={<StudentServiceDashboard />} />
                   
                   {/* Admission staff routes */}
-                  <Route path="/admission/*" element={<Dashboard />} />
+                  <Route path="/admission/*" element={<AdmissionDashboard />} />
                   
                   {/* Tuition staff routes */}
-                  <Route path="/tuition/*" element={<Dashboard />} />
+                  <Route path="/tuition/*" element={<AdmissionDashboard />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -31,15 +31,15 @@ const TuitionSidebar = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-red-900 to-red-800 text-white w-64 min-h-screen p-4 shadow-xl">
+    <div className="bg-gradient-to-b from-green-900 to-green-800 text-white w-64 min-h-screen p-4 shadow-xl">
       {/* Logo */}
-      <div className="flex items-center gap-3 mb-8 pb-4 border-b border-red-700">
+      <div className="flex items-center gap-3 mb-8 pb-4 border-b border-green-700">
         <div className="bg-orange-500 p-2 rounded-lg">
           <School className="h-6 w-6 text-white" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-orange-400">EduStar</h1>
-          <p className="text-xs text-red-300">Phòng Học phí</p>
+          <p className="text-xs text-green-300">Phòng Tuyển sinh</p>
         </div>
       </div>
 
@@ -53,7 +53,7 @@ const TuitionSidebar = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-red-700 ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-green-700 ${
                 isActive ? 'bg-orange-500 shadow-lg' : ''
               }`}
             >
@@ -66,14 +66,14 @@ const TuitionSidebar = () => {
 
       {/* User Info & Logout */}
       <div className="absolute bottom-4 left-4 right-4">
-        <div className="bg-red-800 rounded-lg p-3 mb-3">
+        <div className="bg-green-800 rounded-lg p-3 mb-3">
           <div className="flex items-center gap-3">
             <div className="bg-orange-500 rounded-full w-8 h-8 flex items-center justify-center">
-              <span className="text-sm font-bold">HP</span>
+              <span className="text-sm font-bold">TS</span>
             </div>
             <div>
-              <p className="text-sm font-medium">NV Học phí</p>
-              <p className="text-xs text-red-300">Phòng Học phí</p>
+              <p className="text-sm font-medium">NV Tuyển sinh</p>
+              <p className="text-xs text-green-300">Phòng Tuyển sinh</p>
             </div>
           </div>
         </div>
